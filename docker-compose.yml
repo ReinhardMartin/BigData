@@ -1,0 +1,57 @@
+version: '3'
+services:
+  mosquitto:
+    image: eclipse-mosquitto:latest
+    ports:
+      - "1883:1883"
+    networks:
+      - maintenance-network
+    volumes:
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/log:/mosquitto/log
+
+  flask_app:
+    build: ./UI
+    depends_on:
+      - mosquitto
+    ports:
+      - "5000:5000"
+    networks:
+      - maintenance-network
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    networks:
+      - maintenance-network
+
+  spark:
+    build: ./process
+    ports:
+      - "4040:4040"  # Spark UI
+    depends_on:
+      - mongodb
+      - historical_data
+    networks:
+      - maintenance-network
+    volumes:
+      - ./model-data:/opt/bitnami/spark/model_data
+      - ./process:/opt/bitnami/spark/scripts  # Map local `process` folder to container
+    command: >
+      /bin/bash -c "
+        spark-submit --packages org.mongodb.spark:mongo-spark-connector_2.12:10.3.0 /opt/bitnami/spark/scripts/process.py &&
+        spark-submit --packages org.apache.bahir:spark-streaming-mqtt_2.12:2.4.0 /opt/bitnami/spark/scripts/predictor.py
+      "
+
+  historical_data:
+    build: ./historical_data
+    depends_on:
+      - mongodb
+    networks:
+      - maintenance-network
+
+networks:
+  maintenance-network:
+    driver: bridge
