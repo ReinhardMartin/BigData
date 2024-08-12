@@ -3,16 +3,46 @@ from pyspark.sql import SparkSession
 from pyspark.ml.classification import RandomForestClassificationModel
 from pyspark.ml.feature import VectorAssembler
 import json
+import os
+import time
+from filelock import FileLock, Timeout
 from concurrent.futures import ThreadPoolExecutor
+
+# Define paths
+model_path = "/opt/bitnami/spark/model_data/predictive_model"
+lock_path = model_path + ".lock"
+
+def wait_for_model(model_path, lock_path, timeout=600, check_interval=10):
+    """ Wait for the model file to become available and ensure it's not being updated """
+    lock = FileLock(lock_path)
+    start_time = time.time()
+    
+    while time.time() - start_time < timeout:
+        try:
+            with lock.acquire(timeout=check_interval):
+                if os.path.exists(model_path):
+                    return True
+        except Timeout:
+            pass
+        print(f"Waiting for model file at {model_path}...")
+        time.sleep(check_interval)
+    
+    print(f"Model file not found at {model_path} after {timeout} seconds.")
+    return False
 
 # Create Spark session
 spark = SparkSession.builder \
     .appName("MQTT Spark Predictor") \
     .getOrCreate()
 
-# Load the trained model
-model_path = "/opt/bitnami/spark/model_data/predictive_model"  # Path where the model is saved in the container
-model = RandomForestClassificationModel.load(model_path)
+# Wait for the model file to be available
+if wait_for_model(model_path, lock_path):
+    # Load the trained model
+    model = RandomForestClassificationModel.load(model_path)
+    print(f"Model loaded from {model_path}.")
+else:
+    print("Failed to load model. Exiting...")
+    exit(1)
 
 # Set up the MQTT client for publishing predictions
 publish_client = mqtt.Client()
