@@ -2,6 +2,7 @@ from pyspark.sql import SparkSession
 from pyspark.ml.feature import VectorAssembler
 from pyspark.ml.classification import RandomForestClassifier
 from pyspark.sql.functions import when, col
+import shutil
 
 spark = SparkSession.builder \
     .appName("Mongo-Spark") \
@@ -34,8 +35,11 @@ rf = RandomForestClassifier(labelCol="status", featuresCol="features")
 model = rf.fit(df)
 
 # Save the model
+temp = "/opt/bitnami/spark/model_data/predictive_model_temp"
 model_path = "/opt/bitnami/spark/model_data/predictive_model"
-model.write().overwrite().save(model_path)
+
+model.write().overwrite().save(temp)
+shutil.move(temp, model_path)
 
 print(f"Model saved to {model_path}")
 
