@@ -88,6 +88,6 @@ Ensure all dependencies are installed before running the project.
 ## Authors
 This project was developed by Group 10 for the Big Data Technologies course:
 
-**Damiano Orlandi** - damiano.orlandi@studenti.unitn.it
-**Clelia Porcelluzzi** - clelia.porcelluzzi@studenti.unitn.it - @clelia-p
-**Martin Reinhard** - martin.reinhard@studenti.unitn.it - @ReinhardMartin
+-**Damiano Orlandi** - damiano.orlandi@studenti.unitn.it
+- **Clelia Porcelluzzi** - clelia.porcelluzzi@studenti.unitn.it - @clelia-p
+- **Martin Reinhard** - martin.reinhard@studenti.unitn.it - @ReinhardMartin
