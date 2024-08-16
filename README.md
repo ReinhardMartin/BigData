@@ -67,9 +67,9 @@ View real-time sensor data, equipment statuses, and predicted maintenance schedu
 - **User Interface (UI)**: Provides the front-end interface for viewing predictive maintenance results (`app.py`).
 - **Consumer**: Processes incoming MQTT messages from IoT sensors (`consumer.py`).
 - **Historical Data**: Generates and loads historical data for training and benchmarking (`generation.py`).
--**Mosquitto**: Handles the MQTT broker configuration, data, and logs.
+- **Mosquitto**: Handles the MQTT broker configuration, data, and logs.
 Predictor: Implements machine learning models to predict when maintenance is needed (`predictor.py`).
--**Process**: Handles data processing tasks, such as cleaning and feature extraction (`process.py`).
+- **Process**: Handles data processing tasks, such as cleaning and feature extraction (`process.py`).
 
 ## To Be Implemented
 Enhanced Real-Time Integration: Improve real-time data collection from sensors.
