@@ -92,9 +92,9 @@ def stop():
 def get_status():
     status = {}
     for machine_id, prob in predictions.items():
-        if prob > 0.75:
+        if prob > 0.85:
             status[machine_id] = "green"
-        elif prob >= 0.50:
+        elif prob >= 0.35:
             status[machine_id] = "yellow"
         else:
             status[machine_id] = "red"
