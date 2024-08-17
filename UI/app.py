@@ -10,7 +10,7 @@ app = Flask(__name__)
 
 BROKER = 'mosquitto'
 PORT = 1883
-NUM_MACHINES = 25
+NUM_MACHINES = 5
 is_publishing = False
 is_subscribing = False
 client = mqtt.Client()
@@ -29,6 +29,7 @@ def generate_sensor_data(machine_id):
         "vibration": vibration
     }
     return data
+
 def start_publishing():
     global is_publishing
     is_publishing = True
@@ -92,22 +93,24 @@ def stop():
 
 @app.route('/status', methods=['GET'])
 def get_status():
-    status = {}
+    status = []
     for machine_id, prob in predictions.items():
-        if prob > 0.85:
-            status[machine_id] = "green"
-        elif prob >= 0.35:
-            status[machine_id] = "yellow"
+        failure_probability = 1 - prob
+        if failure_probability > 0.85:
+            color = "red"
+        if failure_probability >= 0.35:
+            color = "yellow"
         else:
-            status[machine_id] = "red"
+            color = "green"
+        status.append({
+            "machine_id": machine_id,
+            "color": color,
+            "failure_probability": failure_probability
+        })
+    # Sort the status list by failure probability in descending order
+    status = sorted(status, key=lambda x: x['failure_probability'], reverse=True)
     return jsonify(status)
-
-@app.route('/schedule', methods=['GET'])
-def get_schedule():
-    # Sort machines by probability (ascending) for maintenance scheduling
-    sorted_machines = sorted(predictions.items(), key=lambda item: item[1])
-    schedule = [{"machine_id": machine_id, "probability": prob} for machine_id, prob in sorted_machines]
-    return jsonify(schedule)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
+
