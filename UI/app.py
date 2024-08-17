@@ -5,7 +5,9 @@ import random
 import time
 import json
 from datetime import datetime
+
 app = Flask(__name__)
+
 BROKER = 'mosquitto'
 PORT = 1883
 NUM_MACHINES = 25
