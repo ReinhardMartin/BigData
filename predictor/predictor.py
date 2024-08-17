@@ -56,7 +56,7 @@ def process_message(topic, payload):
         data = json.loads(payload.decode('utf-8'))
         df = spark.read.json(spark.sparkContext.parallelize([data]))
 
-        features = ["sensor1", "sensor2", "sensor3"]
+        features = ["temperature", "pressure", "vibration"]
 
         assembler = VectorAssembler(inputCols=features, outputCol='features')
 
