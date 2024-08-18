@@ -17,23 +17,49 @@ client = mqtt.Client()
 predictions = {}
 
 def generate_sensor_data(machine_id):
+    # Generate timestamp
     timestamp = datetime.utcnow().isoformat()
+
+    # Generate sensor metrics using normal distribution
     temperature = random.uniform(20.0, 100.0)
     pressure = random.uniform(30.0, 150.0)
     vibration = random.uniform(10.0, 50.0)
+    
+    # Dynamic thresholds
+    lower_threshold_temp = np.random.uniform(59, 65)
+    upper_threshold_temp = np.random.uniform(101, 105)
+
+    lower_threshold_pressure = np.random.uniform(99, 105)
+    upper_threshold_pressure = np.random.uniform(167, 171)
+
+    lower_threshold_vibration = np.random.uniform(44, 46)
+    upper_threshold_vibration = np.random.uniform(65, 68)
+
+    # Determine status based on thresholds
+    if (temperature < lower_threshold_temp) or (temperature > upper_threshold_temp) or \
+       (pressure < lower_threshold_pressure) or (pressure > upper_threshold_pressure) or \
+       (vibration < lower_threshold_vibration) or (vibration > upper_threshold_vibration):
+        status = 'failure'
+    else:
+        status = 'ok'
+
+    # Prepare data
     data = {
         "timestamp": timestamp,
         "machine_id": machine_id,
         "temperature": temperature,
         "pressure": pressure,
-        "vibration": vibration
+        "vibration": vibration,
+        "status": status
     }
+
     return data
 
 def start_publishing():
     global is_publishing
     is_publishing = True
     client.connect(BROKER, PORT, 60)
+    
     while is_publishing:
         for machine_id in range(1, NUM_MACHINES + 1):
             data = generate_sensor_data(machine_id)
