@@ -17,6 +17,7 @@ An MQTT message queue for communication.
 Real-time data ingestion and processing with Spark.
 MongoDB for data storage.
 A Flask-based UI for visualizing predictive maintenance data.
+!(images/framework.png)
 
 ## Project Structure
 
@@ -61,6 +62,7 @@ Build and run the Docker containers:
 ## Usage
 Access the Flask application at `http://localhost:5000`.
 View real-time sensor data, equipment statuses, and predicted maintenance schedules.
+![UI Interface](images/UI_interface.png)
 
 ## Components Description
 - **User Interface (UI)**: Provides the front-end interface to start the stream of data and for viewing predictive maintenance results (`app.py`).
