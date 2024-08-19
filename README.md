@@ -4,8 +4,8 @@ This project was developed for the Big Data Technologies 2023-2024 course as par
 The system leverages IoT sensors to monitor critical machine parameters (e.g., temperature, pressure, vibration) and uses these data streams to predict when maintenance is necessary, thereby increasing uptime and reducing unplanned maintenance.
 
 ## Technologies Used
-- **Spark Streaming**: Processes real-time data streams to predict equipment failure.
-- **MongoDB**: Stores raw and processed sensor data.
+- **Apache Spark**: Train the predictive model and processes real-time data streams.
+- **MongoDB**: Stores historical and new data.
 - **Docker + Docker Compose**: Manages and orchestrates services.
 - **Flask**: Provides the web-based User Interface.
 - **MQTT (Eclipse Mosquitto)**: Manages messaging between system components.
@@ -53,7 +53,6 @@ Installation
 Clone the repository:
 
 `git clone https://github.com/ReinhardMartin/BigData.git`
- `cd BigData`
  
 Build and run the Docker containers:
 
@@ -64,16 +63,17 @@ Access the Flask application at `http://localhost:5000`.
 View real-time sensor data, equipment statuses, and predicted maintenance schedules.
 
 ## Components Description
-- **User Interface (UI)**: Provides the front-end interface for viewing predictive maintenance results (`app.py`).
-- **Consumer**: Processes incoming MQTT messages from IoT sensors (`consumer.py`).
-- **Historical Data**: Generates and loads historical data for training and benchmarking (`generation.py`).
+- **User Interface (UI)**: Provides the front-end interface to start the stream of data and for viewing predictive maintenance results (`app.py`).
+- **Consumer**: Collects incoming MQTT messages from IoT sensors and stores it in MongoDB (`consumer.py`).
+- **Historical Data**: Generates and loads historical data for training (`generation.py`).
 - **Mosquitto**: Handles the MQTT broker configuration, data, and logs.
-Predictor: Implements machine learning models to predict when maintenance is needed (`predictor.py`).
-- **Process**: Handles data processing tasks, such as cleaning and feature extraction (`process.py`).
+- **Predictor**: Handles data processing tasks on the stream of data (`process.py`).
+- **Process**: Implements machine learning models to predict the machine status (`predictor.py`).
 
 ## To Be Implemented
-Enhanced Real-Time Integration: Improve real-time data collection from sensors.
+Enhanced Real-Time Integration: Improve real-time data procession from sensors.
 Improved Machine Learning Models: Develop more advanced algorithms for better predictive accuracy.
+Improve synthetic data generation: add more contextual attributes and improve data consistency.
 
 ## Dependencies da controllare
 Docker v24.0.2
